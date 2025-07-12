@@ -8,8 +8,8 @@ import {
   ActivityIndicator,
   Dimensions,
   ScrollView,
-  TouchableOpacity,   // 🔄
-  Linking,            // 🔄
+  TouchableOpacity,
+  Linking,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import {
@@ -21,7 +21,8 @@ import {
 import api from "../../utils/api";
 import { useTokenStore } from "../../stores/tokenStore";
 import { RecommendRouteProp } from "../../types/recommend";
-import { Movie, PlayItem } from "../../types/recommend";
+import { Movie } from "../../types/music";
+import { PlayItem } from "../../types/recommend";
 
 const Recommend = () => {
   const route = useRoute<RecommendRouteProp>();
@@ -30,34 +31,40 @@ const Recommend = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [plays, setPlays] = useState<PlayItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const accessToken = useTokenStore((state) => state.accessToken);
+  const accessToken = useTokenStore((s) => s.accessToken);
 
-  /* ---------- helper : 유튜브 썸네일 ---------- */
-  const getYoutubeId = (url: string) => {
-    const match = url.match(
-      /(?:v=|\/embed\/|\/watch\/|youtu\.be\/|\/v\/|\/videos\/|start_radio=1\&list=[^&]*&v=)([0-9A-Za-z_-]{11})/
-    );
-    return match ? match[1] : "";
+  const getYoutubeId = (raw?: string) => {
+    if (!raw) return "";
+    try {
+      const url = new URL(raw);
+      const v = url.searchParams.get("v");
+      if (v && v.length === 11) return v;
+    } catch {
+    }
+    const m = raw.match(/(?:youtu\.be\/|embed\/|watch\?v=|v\/)([0-9A-Za-z_-]{11})/);
+    return m ? m[1] : "";
   };
-  const getThumbnail = (url: string) =>
-    `https://img.youtube.com/vi/${getYoutubeId(url)}/hqdefault.jpg`;
+  const getThumbnail = (raw?: string) => {
+    const id = getYoutubeId(raw);
+    return id
+      ? `https://img.youtube.com/vi/${id}/hqdefault.jpg`
+      : "https://img.youtube.com/vi/404/hqdefault.jpg"; 
+  };
 
-  /* ---------- 영화 추천 ---------- */
   const fetchMovies = async () => {
     const res = await api.post(
       "/api/recommendation/movie",
       { emotion, message, moviecount: 10, genre: "" },
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      { headers: { Authorization: `Bearer ${accessToken}` } } 
     );
     if (res.data.code === "SUCCESS") setMovies(res.data.data);
   };
 
-  /* ---------- 플레이리스트 ---------- */
   const fetchPlays = async () => {
     const res = await api.post(
       "/api/recommendation/music",
       { emotion, message },
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      { headers: { Authorization: `Bearer ${accessToken}` } } 
     );
     if (res.data.code === "SUCCESS") setPlays(res.data.data);
   };
@@ -86,31 +93,16 @@ const Recommend = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {/* ---------- 헤더 ---------- */}
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <Image
-            source={require("../../../assets/Emobin.png")}
-            style={styles.logo}
-          />
-          <Image
-            source={require("../../../assets/logo.png")}
-            style={styles.profile}
-          />
+          <Image source={require("../../../assets/Emobin.png")} style={styles.logo} />
+          <Image source={require("../../../assets/logo.png")} style={styles.profile} />
         </View>
 
-        {/* ---------- 배너 ---------- */}
         <View style={styles.banner}>
-          <Image
-            source={require("../../../assets/subtail.png")}
-            style={styles.bannerImg}
-          />
+          <Image source={require("../../../assets/subtail.png")} style={styles.bannerImg} />
         </View>
 
-        {/* ---------- 영화 섹션 ---------- */}
         <Text style={styles.sectionTitle}>영화 / 드라마</Text>
         <FlatList
           data={movies}
@@ -120,12 +112,9 @@ const Recommend = () => {
           snapToInterval={POSTER_WIDTH + POSTER_SPACING}
           decelerationRate="fast"
           contentContainerStyle={{
-            paddingHorizontal:
-              (Dimensions.get("window").width - POSTER_WIDTH) / 2,
+            paddingHorizontal: (Dimensions.get("window").width - POSTER_WIDTH) / 2,
           }}
-          ItemSeparatorComponent={() => (
-            <View style={{ width: POSTER_SPACING }} />
-          )}
+          ItemSeparatorComponent={() => <View style={{ width: POSTER_SPACING }} />}
           renderItem={({ item }) => (
             <Image
               source={{ uri: item.posterUrl }}
@@ -135,32 +124,27 @@ const Recommend = () => {
           )}
         />
 
-        {/* ---------- 플레이리스트 섹션 ---------- */}
         <Text style={[styles.sectionTitle, { marginTop: 24 }]}>플레이리스트</Text>
         <FlatList
           data={plays}
-          keyExtractor={(item, idx) => `${idx}-${item.musicUrl}`} // 🔄
+          keyExtractor={(_, idx) => String(idx)}
           horizontal
           showsHorizontalScrollIndicator={false}
           snapToInterval={PLAY_WIDTH + 12}
           decelerationRate="fast"
           contentContainerStyle={{
-            paddingHorizontal:
-              (Dimensions.get("window").width - PLAY_WIDTH) / 2,
+            paddingHorizontal: (Dimensions.get("window").width - PLAY_WIDTH) / 2,
           }}
           ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => Linking.openURL(item.musicUrl)} // 🔄
-            >
+            <TouchableOpacity activeOpacity={0.8} onPress={() => Linking.openURL(item.youtubeUrl)}>
               <Image
-                source={{ uri: getThumbnail(item.musicUrl) }} // 🔄
+                source={{ uri: getThumbnail(item.youtubeUrl) }}
                 style={[styles.playThumb, { width: PLAY_WIDTH }]}
                 resizeMode="cover"
               />
               <Text style={styles.playCaption} numberOfLines={1}>
-                {item.musictitle} {/* 🔄 */}
+                {item.title || "제목 없음"}
               </Text>
             </TouchableOpacity>
           )}
