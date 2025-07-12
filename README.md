@@ -6,9 +6,9 @@ npm install
 npm expo start
 ```
 
-<img width="1080" height="2400" alt="Screenshot_1752353218" src="https://github.com/user-attachments/assets/9a9af74d-fd4e-45e2-b219-3de1463bd950" />
-<img width="351" height="816" alt="1" src="https://github.com/user-attachments/assets/e0e9aed9-4a7c-4788-8471-eb89f018a07a" />
-<img width="1080" height="2400" alt="Screenshot_1752353273" src="https://github.com/user-attachments/assets/51584714-9db0-4668-8063-f8a3b04354fa" />
+<img width="350" height="800" alt="Screenshot_1752353218" src="https://github.com/user-attachments/assets/9a9af74d-fd4e-45e2-b219-3de1463bd950" />
+<img width="350" height="800" alt="1" src="https://github.com/user-attachments/assets/e0e9aed9-4a7c-4788-8471-eb89f018a07a" />
+<img width="350" height="800" alt="Screenshot_1752353273" src="https://github.com/user-attachments/assets/51584714-9db0-4668-8063-f8a3b04354fa" />
 <img width="1080" height="2400" alt="Screenshot_1752353279" src="https://github.com/user-attachments/assets/6c50c2ce-eb52-4422-8166-1f04b8f411e2" />
 <img width="1080" height="2400" alt="Screenshot_1752353282" src="https://github.com/user-attachments/assets/75770d04-e594-4ede-8178-4003b099bf3e" />
 <img width="1080" height="2400" alt="Screenshot_1752353292" src="https://github.com/user-attachments/assets/6b83c298-5c71-4423-83ec-8bf7962bb1c7" />
