@@ -72,8 +72,7 @@ export default function Navigation() {
         name="MyPage"
         component={MyPage}
         options={{
-          tabBarLabel: "마이페이지",
-          tabBarStyle: { display: "none" },
+          tabBarLabel: "설정",
           tabBarIcon: ({ focused }) => (
             <MyPageIcon
               fill={focused ? "#000" : "#BEBEBE"}

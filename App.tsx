@@ -15,6 +15,8 @@ import WriteNote from "./src/screens/WriteNote/WriteNote";
 import Processing from "./src/screens/Processing/Processing";
 import EmotionResult from "./src/screens/EmotionResult/EmotionResult";
 import Navigation from "./src/screens/Nav/Navigation";
+import UserInfo from "./src/screens/UserInfo/UserInfo";
+import Notice from "./src/screens/Notice/Notice";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -108,6 +110,9 @@ export default function App() {
         <Stack.Screen name="WriteNote" component={WriteNote} />
         <Stack.Screen name="Processing" component={Processing} />
         <Stack.Screen name="EmotionResult" component={EmotionResult} />
+        <Stack.Screen name="UserInfo" component={UserInfo} />
+        <Stack.Screen name="Notice" component={Notice} />
+        
 
         <Stack.Screen name="MainTabs" component={Navigation} />
       </Stack.Navigator>
